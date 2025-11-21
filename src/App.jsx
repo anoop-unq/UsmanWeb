@@ -1,576 +1,11 @@
 
 
-// import React, { useState, useRef } from 'react';
-// import { Upload, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from 'lucide-react';
-
-// // UploadedImage Component (in left sidebar)
-// const UploadedImage = ({ image, onDragStart }) => {
-//   return (
-//     <div
-//       draggable
-//       onDragStart={(e) => onDragStart(e, image)}
-//       className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-move hover:shadow-lg transition-shadow border-2 border-transparent hover:border-blue-400"
-//     >
-//       <img 
-//         src={image.src} 
-//         alt={image.name}
-//         className="w-full h-24 object-cover"
-//       />
-//       <div className="absolute top-1 right-1 bg-green-500 text-white rounded-full p-1">
-//         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-//           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-//         </svg>
-//       </div>
-//       <p className="text-xs text-gray-600 p-2 text-center truncate">{image.name}</p>
-//     </div>
-//   );
-// };
-
-// // PageCanvas Component (droppable area)
-// const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, onClick }) => {
-//   const [isDragging, setIsDragging] = useState(false);
-
-//   const handleDragOver = (e) => {
-//     e.preventDefault();
-//     setIsDragging(true);
-//     onDragOver(e);
-//   };
-
-//   const handleDragLeave = () => {
-//     setIsDragging(false);
-//   };
-
-//   const handleDrop = (e) => {
-//     e.preventDefault();
-//     setIsDragging(false);
-//     onDrop(e, index);
-//   };
-
-//   return (
-//     <div
-//       onClick={onClick}
-//       onDragOver={handleDragOver}
-//       onDragLeave={handleDragLeave}
-//       onDrop={handleDrop}
-//       className={`relative bg-white transition-all ${
-//         isActive ? 'ring-4 ring-blue-500' : ''
-//       } ${isDragging ? 'ring-4 ring-blue-300 bg-blue-50' : ''}`}
-//       style={{ 
-//         aspectRatio: '8.5/11',
-//         background: page.bgColor || '#faf9f6'
-//       }}
-//     >
-//       {/* Main Content Area */}
-//       <div className="h-full flex flex-col justify-between p-6">
-//         {/* Top Text Area */}
-//         {page.topText && (
-//           <div className="text-center">
-//             <input
-//               type="text"
-//               value={page.topText}
-//               onChange={(e) => onTextChange(index, 'topText', e.target.value)}
-//               onClick={(e) => e.stopPropagation()}
-//               className="w-full text-3xl font-serif text-center bg-transparent border-none outline-none"
-//               style={{ 
-//                 fontFamily: page.topTextFont || 'Georgia',
-//                 textAlign: page.topTextAlign || 'center',
-//                 color: '#2d5a4a'
-//               }}
-//               placeholder="Add your text here"
-//             />
-//           </div>
-//         )}
-
-//         {/* Image Drop Zone */}
-//         <div className="flex-1 flex items-center justify-center my-4">
-//           {page.image ? (
-//             <div className="relative group">
-//               <img 
-//                 src={page.image} 
-//                 alt="Page content"
-//                 className="max-w-full max-h-64 object-contain"
-//                 style={{
-//                   filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
-//                 }}
-//               />
-//               <button
-//                 onClick={(e) => {
-//                   e.stopPropagation();
-//                   onTextChange(index, 'image', null);
-//                 }}
-//                 className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-//               >
-//                 <Trash2 size={14} />
-//               </button>
-//             </div>
-//           ) : (
-//             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center w-full">
-//               <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
-//                 <Upload size={24} className="text-gray-400" />
-//               </div>
-//               <p className="text-gray-400 text-xs">Drag & Drop Image Here</p>
-//             </div>
-//           )}
-//         </div>
-
-//         {/* Bottom Text Area */}
-//         {page.bottomText && (
-//           <div className="text-center">
-//             <input
-//               type="text"
-//               value={page.bottomText}
-//               onChange={(e) => onTextChange(index, 'bottomText', e.target.value)}
-//               onClick={(e) => e.stopPropagation()}
-//               className="w-full text-xs text-center bg-transparent border-none outline-none uppercase tracking-wider"
-//               style={{ 
-//                 fontFamily: page.bottomTextFont || 'Arial',
-//                 textAlign: page.bottomTextAlign || 'center',
-//                 letterSpacing: '0.2em'
-//               }}
-//               placeholder="Add caption or delete if you prefer"
-//             />
-//           </div>
-//         )}
-
-//         {/* Page Numbers */}
-//         <div className="flex justify-between text-xs text-gray-500 mt-4">
-//           <div>Page {index + 1}</div>
-//           <div>Page {index + 2}</div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // PageThumbnail Component
-// const PageThumbnail = ({ page, index, isActive, onClick, label }) => {
-//   return (
-//     <div
-//       onClick={onClick}
-//       className={`relative cursor-pointer bg-white shadow-md hover:shadow-lg transition-all overflow-hidden ${
-//         isActive ? 'ring-2 ring-blue-500' : ''
-//       }`}
-//       style={{ aspectRatio: '8.5/11' }}
-//     >
-//       <div className="h-full p-1 text-xs" style={{ background: page.bgColor || '#faf9f6' }}>
-//         {page.image && (
-//           <img src={page.image} alt={`Page ${index + 1}`} className="w-full h-16 object-contain mb-1" />
-//         )}
-//         {page.topText && (
-//           <div className="text-center text-xs truncate font-serif">{page.topText}</div>
-//         )}
-//         {page.bottomText && (
-//           <div className="text-center text-xs truncate text-gray-500">{page.bottomText}</div>
-//         )}
-//       </div>
-//       <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 text-center py-1">
-//         <p className="text-xs font-medium">{label}</p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // TextEditor Sidebar Component
-// const TextEditorSidebar = ({ activePage, onUpdate }) => {
-//   if (!activePage) return (
-//     <div className="p-6 text-center text-gray-400">
-//       <p className="mb-3">Select a page to edit text</p>
-//       <p className="text-sm">Click on any page to start editing</p>
-//     </div>
-//   );
-
-//   return (
-//     <div className="p-4 space-y-6">
-//       <div>
-//         <h3 className="font-semibold mb-3 text-gray-800">Text Editor</h3>
-//       </div>
-
-//       {/* Main Text Field */}
-//       <div>
-//         <label className="block text-sm font-medium mb-2">Main Text</label>
-//         <textarea
-//           value={activePage.topText || ''}
-//           onChange={(e) => onUpdate({ topText: e.target.value })}
-//           className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-//           rows={4}
-//           placeholder="Add your main text here..."
-//         />
-//       </div>
-
-//       {/* Caption Text Field */}
-//       <div>
-//         <label className="block text-sm font-medium mb-2">Caption Text</label>
-//         <input
-//           type="text"
-//           value={activePage.bottomText || ''}
-//           onChange={(e) => onUpdate({ bottomText: e.target.value })}
-//           className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-//           placeholder="Add photo caption here or delete if you prefer"
-//         />
-//       </div>
-
-//       {/* Text Alignment */}
-//       <div>
-//         <label className="block text-sm font-medium mb-2">Text Alignment</label>
-//         <div className="flex gap-2">
-//           <button
-//             onClick={() => onUpdate({ topTextAlign: 'left' })}
-//             className={`flex-1 p-3 border rounded-lg flex items-center justify-center ${
-//               activePage.topTextAlign === 'left' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 hover:bg-gray-50'
-//             }`}
-//           >
-//             <AlignLeft size={18} />
-//           </button>
-//           <button
-//             onClick={() => onUpdate({ topTextAlign: 'center' })}
-//             className={`flex-1 p-3 border rounded-lg flex items-center justify-center ${
-//               activePage.topTextAlign === 'center' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 hover:bg-gray-50'
-//             }`}
-//           >
-//             <AlignCenter size={18} />
-//           </button>
-//           <button
-//             onClick={() => onUpdate({ topTextAlign: 'right' })}
-//             className={`flex-1 p-3 border rounded-lg flex items-center justify-center ${
-//               activePage.topTextAlign === 'right' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 hover:bg-gray-50'
-//             }`}
-//           >
-//             <AlignRight size={18} />
-//           </button>
-//         </div>
-//       </div>
-
-//       {/* Font Selection */}
-//       <div>
-//         <label className="block text-sm font-medium mb-2">Font Family</label>
-//         <div className="grid grid-cols-2 gap-2">
-//           <button
-//             onClick={() => onUpdate({ topTextFont: 'Georgia' })}
-//             className={`p-3 border rounded-lg text-sm ${
-//               activePage.topTextFont === 'Georgia' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 hover:bg-gray-50'
-//             }`}
-//           >
-//             Georgia
-//           </button>
-//           <button
-//             onClick={() => onUpdate({ topTextFont: 'Arial' })}
-//             className={`p-3 border rounded-lg text-sm ${
-//               activePage.topTextFont === 'Arial' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white border-gray-300 hover:bg-gray-50'
-//             }`}
-//           >
-//             Arial
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// // Main App Component
-// const App = () => {
-//   const [uploadedImages, setUploadedImages] = useState([]);
-//   const [pages, setPages] = useState([
-//     { 
-//       id: 'page-1',
-//       image: null, 
-//       topText: 'ado area', 
-//       bottomText: 'Adi para apreciar todas as dicas fiyas pode',
-//       bgColor: '#ffffff',
-//       topTextAlign: 'center',
-//       topTextFont: 'Georgia'
-//     },
-//     { 
-//       id: 'page-2',
-//       image: null, 
-//       topText: 'ado area', 
-//       bottomText: 'Adi para apreciar todas as dicas fiyas pode',
-//       bgColor: '#ffffff',
-//       topTextAlign: 'center',
-//       topTextFont: 'Georgia'
-//     },
-//   ]);
-//   const [activePageIndex, setActivePageIndex] = useState(0);
-//   const [draggedImage, setDraggedImage] = useState(null);
-//   const [currentSpread, setCurrentSpread] = useState(0);
-//   const [scale, setScale] = useState(0.8);
-//   const fileInputRef = useRef(null);
-
-//   const handleFileUpload = (e) => {
-//     const files = Array.from(e.target.files);
-//     files.forEach(file => {
-//       const reader = new FileReader();
-//       reader.onload = (event) => {
-//         const newImage = {
-//           id: Date.now() + Math.random(),
-//           src: event.target.result,
-//           name: file.name
-//         };
-//         setUploadedImages(prev => [...prev, newImage]);
-//       };
-//       reader.readAsDataURL(file);
-//     });
-//   };
-
-//   const handleDragStart = (e, image) => {
-//     setDraggedImage(image);
-//     e.dataTransfer.effectAllowed = 'copy';
-//   };
-
-//   const handleDragOver = (e) => {
-//     e.preventDefault();
-//     e.dataTransfer.dropEffect = 'copy';
-//   };
-
-//   const handleDrop = (e, pageIndex) => {
-//     e.preventDefault();
-//     if (draggedImage) {
-//       const newPages = [...pages];
-//       newPages[pageIndex] = { ...newPages[pageIndex], image: draggedImage.src };
-//       setPages(newPages);
-//       setDraggedImage(null);
-//     }
-//   };
-
-//   const handleTextChange = (pageIndex, field, value) => {
-//     const newPages = [...pages];
-//     newPages[pageIndex] = { ...newPages[pageIndex], [field]: value };
-//     setPages(newPages);
-//   };
-
-//   const handlePageUpdate = (updates) => {
-//     const newPages = [...pages];
-//     newPages[activePageIndex] = { ...newPages[activePageIndex], ...updates };
-//     setPages(newPages);
-//   };
-
-//   const handleAddPage = () => {
-//     const newPage = {
-//       id: `page-${Date.now()}`,
-//       image: null,
-//       topText: '',
-//       bottomText: '',
-//       bgColor: '#ffffff'
-//     };
-//     setPages([...pages, newPage]);
-//   };
-
-//   const handleZoomIn = () => {
-//     setScale(prev => Math.min(prev + 0.1, 1.2));
-//   };
-
-//   const handleZoomOut = () => {
-//     setScale(prev => Math.max(prev - 0.1, 0.5));
-//   };
-
-//   const nextSpread = () => {
-//     setCurrentSpread(prev => Math.min(prev + 1, Math.floor((pages.length - 1) / 2)));
-//   };
-
-//   const prevSpread = () => {
-//     setCurrentSpread(prev => Math.max(prev - 1, 0));
-//   };
-
-//   // Get current spread pages (2 pages horizontally)
-//   const currentPages = [
-//     pages[currentSpread * 2],
-//     pages[currentSpread * 2 + 1]
-//   ].filter(Boolean);
-
-//   return (
-//     <div className="flex h-screen bg-gray-50 overflow-hidden">
-//       {/* Left Sidebar - Upload Area */}
-//       <div className="w-60 bg-white border-r border-gray-200 flex flex-col">
-//         <div className="p-3 border-b">
-//           <h2 className="font-semibold mb-2 text-sm">Upload</h2>
-          
-//           {/* Autofill Toggle */}
-//           <div className="flex items-center gap-2 mb-3">
-//             <input type="checkbox" id="autofill" className="w-3 h-3" />
-//             <label htmlFor="autofill" className="text-xs">Autofill</label>
-//           </div>
-//         </div>
-
-//         {/* Uploaded Images */}
-//         <div className="flex-1 overflow-y-auto p-3">
-//           <div className="space-y-2">
-//             {uploadedImages.map((image) => (
-//               <UploadedImage
-//                 key={image.id}
-//                 image={image}
-//                 onDragStart={handleDragStart}
-//               />
-//             ))}
-//           </div>
-//         </div>
-
-//         {/* Upload Button */}
-//         <div className="p-3 border-t">
-//           <button
-//             onClick={() => fileInputRef.current?.click()}
-//             className="w-full bg-gray-700 text-white py-2 rounded text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1"
-//           >
-//             <Plus size={16} />
-//             Upload images
-//           </button>
-//           <input
-//             ref={fileInputRef}
-//             type="file"
-//             accept="image/*"
-//             multiple
-//             onChange={handleFileUpload}
-//             className="hidden"
-//           />
-//         </div>
-//       </div>
-
-//       {/* Main Content Area */}
-//       <div className="flex-1 flex flex-col min-w-0">
-//         {/* Top Toolbar */}
-//         <div className="bg-white border-b px-4 py-2 flex items-center justify-between flex-shrink-0">
-//           <div className="flex items-center gap-2">
-//             <button 
-//               className="p-1 hover:bg-gray-100 rounded"
-//               onClick={prevSpread}
-//               disabled={currentSpread === 0}
-//             >
-//               <ChevronLeft size={16} />
-//             </button>
-//             <button 
-//               className="p-1 hover:bg-gray-100 rounded"
-//               onClick={nextSpread}
-//               disabled={currentSpread >= Math.floor((pages.length - 1) / 2)}
-//             >
-//               <ChevronRight size={16} />
-//             </button>
-//           </div>
-          
-//           <div className="flex items-center gap-1">
-//             <button 
-//               className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-xs"
-//               onClick={handleZoomOut}
-//             >
-//               −
-//             </button>
-//             <span className="text-xs w-12 text-center">{Math.round(scale * 100)}%</span>
-//             <button 
-//               className="px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-xs"
-//               onClick={handleZoomIn}
-//             >
-//               +
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Canvas Area with Horizontal Pages */}
-//         <div className="flex-1 overflow-auto bg-gray-100 p-4">
-//           <div 
-//             className="mx-auto transition-transform duration-200"
-//             style={{ 
-//               transform: `scale(${scale})`,
-//               transformOrigin: 'center center'
-//             }}
-//           >
-//             {/* Carousel Navigation */}
-//             <div className="flex items-center justify-center mb-6 space-x-8">
-//               <button
-//                 onClick={prevSpread}
-//                 disabled={currentSpread === 0}
-//                 className="p-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-//               >
-//                 <ArrowLeft size={24} className="text-gray-600" />
-//               </button>
-              
-//               <div className="text-center">
-//                 <div className="text-lg font-semibold text-gray-800">
-//                   Spread {currentSpread + 1}
-//                 </div>
-//                 <div className="text-sm text-gray-500">
-//                   Pages {currentSpread * 2 + 1}-{Math.min(currentSpread * 2 + 2, pages.length)}
-//                 </div>
-//               </div>
-              
-//               <button
-//                 onClick={nextSpread}
-//                 disabled={currentSpread >= Math.floor((pages.length - 1) / 2)}
-//                 className="p-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-//               >
-//                 <ArrowRight size={24} className="text-gray-600" />
-//               </button>
-//             </div>
-
-//             {/* Horizontal Pages */}
-//             <div className="grid grid-cols-2 gap-8 max-w-4xl mx-auto">
-//               {currentPages.map((page, idx) => {
-//                 const actualIndex = currentSpread * 2 + idx;
-//                 return (
-//                   <PageCanvas
-//                     key={page?.id || idx}
-//                     page={page || {}}
-//                     index={actualIndex}
-//                     onDrop={handleDrop}
-//                     onDragOver={handleDragOver}
-//                     onTextChange={handleTextChange}
-//                     isActive={activePageIndex === actualIndex}
-//                     onClick={() => setActivePageIndex(actualIndex)}
-//                   />
-//                 );
-//               })}
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Bottom Thumbnails */}
-//         <div className="bg-white border-t px-3 py-2 flex-shrink-0">
-//           <div className="flex items-center justify-between mb-1">
-//             <button className="text-xs text-gray-600 hover:text-gray-800 flex items-center gap-1">
-//               <span>📖</span> Organize pages
-//             </button>
-//           </div>
-          
-//           <div className="flex gap-2 overflow-x-auto pb-1">
-//             {pages.map((page, index) => (
-//               <div key={page.id} className="flex-shrink-0" style={{ width: '80px' }}>
-//                 <PageThumbnail
-//                   page={page}
-//                   index={index}
-//                   isActive={activePageIndex === index}
-//                   onClick={() => {
-//                     setActivePageIndex(index);
-//                     setCurrentSpread(Math.floor(index / 2));
-//                   }}
-//                   label={`Page ${index + 1}`}
-//                 />
-//               </div>
-//             ))}
-            
-//             <button
-//               onClick={handleAddPage}
-//               className="flex-shrink-0 border-2 border-dashed border-gray-300 rounded hover:border-blue-400 hover:bg-blue-50 transition-all flex items-center justify-center"
-//               style={{ width: '80px', aspectRatio: '8.5/11' }}
-//             >
-//               <Plus size={16} className="text-gray-400" />
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Right Sidebar - Text Editor */}
-//       <div className="w-80 bg-white border-l border-gray-200 overflow-y-auto flex-shrink-0">
-//         <TextEditorSidebar
-//           activePage={pages[activePageIndex]}
-//           onUpdate={handlePageUpdate}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default App;
 
 
 import React, { useState, useRef } from 'react';
-import { Upload, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Upload, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, Crop, X, Check } from 'lucide-react';
 
+// Background Images Data (same as before)
 // Background Images Data
 const BACKGROUND_IMAGES = [
   { id: 'bg1', name: 'Floral Left', pattern: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M20 50 Q30 30 40 50 T60 50\' stroke=\'%23e5e5e5\' fill=\'none\' stroke-width=\'1\'/%3E%3Ccircle cx=\'30\' cy=\'80\' r=\'15\' fill=\'none\' stroke=\'%23e5e5e5\' stroke-width=\'1\'/%3E%3Cpath d=\'M25 120 L35 110 L40 120 L35 130 Z\' fill=\'%23e5e5e5\'/%3E%3C/svg%3E") left repeat-y' },
@@ -650,13 +85,256 @@ const BACKGROUND_IMAGES = [
 
 ];
 
-// UploadedImage Component (in left sidebar)
-const UploadedImage = ({ image, onDragStart }) => {
+// Image Cropper Component
+const ImageCropper = ({ image, onCrop, onCancel }) => {
+  const [crop, setCrop] = useState({ x: 0, y: 0, width: 100, height: 100 });
+  const containerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [resizeHandle, setResizeHandle] = useState(null);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    // Check if clicking on resize handles
+    const handles = ['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'];
+    for (const handle of handles) {
+      if (isInHandle(handle, x, y)) {
+        setResizeHandle(handle);
+        setDragStart({ x, y });
+        setIsDragging(true);
+        return;
+      }
+    }
+
+    // Check if clicking inside crop area for moving
+    if (x >= crop.x && x <= crop.x + crop.width && 
+        y >= crop.y && y <= crop.y + crop.height) {
+      setResizeHandle('move');
+      setDragStart({ x: x - crop.x, y: y - crop.y });
+      setIsDragging(true);
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !resizeHandle) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    const newCrop = { ...crop };
+
+    switch (resizeHandle) {
+      case 'move':
+        newCrop.x = Math.max(0, Math.min(100 - newCrop.width, x - dragStart.x));
+        newCrop.y = Math.max(0, Math.min(100 - newCrop.height, y - dragStart.y));
+        break;
+      case 'nw':
+        newCrop.width += crop.x - x;
+        newCrop.height += crop.y - y;
+        newCrop.x = Math.max(0, x);
+        newCrop.y = Math.max(0, y);
+        break;
+      case 'ne':
+        newCrop.width = Math.max(10, x - crop.x);
+        newCrop.height += crop.y - y;
+        newCrop.y = Math.max(0, y);
+        break;
+      case 'sw':
+        newCrop.width += crop.x - x;
+        newCrop.height = Math.max(10, y - crop.y);
+        newCrop.x = Math.max(0, x);
+        break;
+      case 'se':
+        newCrop.width = Math.max(10, x - crop.x);
+        newCrop.height = Math.max(10, y - crop.y);
+        break;
+      case 'n':
+        newCrop.height += crop.y - y;
+        newCrop.y = Math.max(0, y);
+        break;
+      case 's':
+        newCrop.height = Math.max(10, y - crop.y);
+        break;
+      case 'e':
+        newCrop.width = Math.max(10, x - crop.x);
+        break;
+      case 'w':
+        newCrop.width += crop.x - x;
+        newCrop.x = Math.max(0, x);
+        break;
+    }
+
+    // Ensure minimum size
+    newCrop.width = Math.max(10, newCrop.width);
+    newCrop.height = Math.max(10, newCrop.height);
+
+    // Ensure within bounds
+    newCrop.x = Math.max(0, Math.min(100 - newCrop.width, newCrop.x));
+    newCrop.y = Math.max(0, Math.min(100 - newCrop.height, newCrop.y));
+
+    setCrop(newCrop);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setResizeHandle(null);
+  };
+
+  const isInHandle = (handle, x, y) => {
+    const handles = {
+      nw: { x: crop.x - 2, y: crop.y - 2, width: 4, height: 4 },
+      ne: { x: crop.x + crop.width - 2, y: crop.y - 2, width: 4, height: 4 },
+      sw: { x: crop.x - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
+      se: { x: crop.x + crop.width - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
+      n: { x: crop.x + crop.width / 2 - 2, y: crop.y - 2, width: 4, height: 4 },
+      s: { x: crop.x + crop.width / 2 - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
+      e: { x: crop.x + crop.width - 2, y: crop.y + crop.height / 2 - 2, width: 4, height: 4 },
+      w: { x: crop.x - 2, y: crop.y + crop.height / 2 - 2, width: 4, height: 4 },
+    };
+
+    const handleArea = handles[handle];
+    return x >= handleArea.x && x <= handleArea.x + handleArea.width && 
+           y >= handleArea.y && y <= handleArea.y + handleArea.height;
+  };
+
+  const handleCrop = () => {
+    // Create a canvas to crop the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      const scaleX = img.width / 100;
+      const scaleY = img.height / 100;
+      
+      canvas.width = crop.width * scaleX;
+      canvas.height = crop.height * scaleY;
+      
+      ctx.drawImage(
+        img,
+        crop.x * scaleX, crop.y * scaleY,
+        crop.width * scaleX, crop.height * scaleY,
+        0, 0,
+        crop.width * scaleX, crop.height * scaleY
+      );
+      
+      const croppedImageUrl = canvas.toDataURL('image/png');
+      onCrop(croppedImageUrl);
+    };
+    
+    img.src = image;
+  };
+
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, resizeHandle]);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="text-lg font-semibold">Crop Image</h3>
+          <div className="flex gap-2">
+            <button
+              onClick={onCancel}
+              className="p-2 text-gray-500 hover:text-gray-700"
+            >
+              <X size={20} />
+            </button>
+            <button
+              onClick={handleCrop}
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              <Check size={20} />
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-4">
+          <div 
+            ref={containerRef}
+            className="relative bg-gray-100 rounded-lg overflow-hidden mx-auto"
+            style={{ aspectRatio: '1', maxHeight: '60vh' }}
+            onMouseDown={handleMouseDown}
+          >
+            <img 
+              src={image} 
+              alt="Crop preview" 
+              className="w-full h-full object-contain"
+            />
+            
+            {/* Crop overlay */}
+            <div
+              className="absolute border-2 border-white shadow-lg"
+              style={{
+                left: `${crop.x}%`,
+                top: `${crop.y}%`,
+                width: `${crop.width}%`,
+                height: `${crop.height}%`,
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+              }}
+            >
+              {/* Resize handles */}
+              {['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'].map(handle => (
+                <div
+                  key={handle}
+                  className={`absolute bg-white border border-blue-500 ${
+                    handle.includes('n') || handle.includes('s') ? 'h-2 w-4' : 'w-2 h-4'
+                  } ${handle.includes('n') ? '-top-1' : ''} ${
+                    handle.includes('s') ? '-bottom-1' : ''
+                  } ${handle.includes('w') ? '-left-1' : ''} ${
+                    handle.includes('e') ? '-right-1' : ''
+                  } ${handle.length === 2 ? 'w-2 h-2' : ''} cursor-${
+                    handle === 'nw' ? 'nw-resize' :
+                    handle === 'ne' ? 'ne-resize' :
+                    handle === 'sw' ? 'sw-resize' :
+                    handle === 'se' ? 'se-resize' :
+                    handle.includes('n') ? 'n-resize' :
+                    handle.includes('s') ? 's-resize' :
+                    handle.includes('e') ? 'e-resize' : 'w-resize'
+                  }`}
+                  style={{
+                    left: handle.includes('w') ? '0' : handle.includes('e') ? '100%' : '50%',
+                    top: handle.includes('n') ? '0' : handle.includes('s') ? '100%' : '50%',
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          
+          <div className="mt-4 text-center text-sm text-gray-600">
+            Drag to move, drag handles to resize
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced UploadedImage Component with Crop Option
+const UploadedImage = ({ image, onDragStart, onCrop }) => {
+  const [showOptions, setShowOptions] = useState(false);
+
   return (
     <div
       draggable
       onDragStart={(e) => onDragStart(e, image)}
-      className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-move hover:shadow-lg transition-shadow border-2 border-transparent hover:border-blue-400"
+      className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-move hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-400 group"
+      onMouseEnter={() => setShowOptions(true)}
+      onMouseLeave={() => setShowOptions(false)}
     >
       <img 
         src={image.src} 
@@ -668,13 +346,28 @@ const UploadedImage = ({ image, onDragStart }) => {
           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
         </svg>
       </div>
+      
+      {/* Crop Button */}
+      {showOptions && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onCrop(image);
+          }}
+          className="absolute top-1 left-1 bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 transition-colors"
+          title="Crop Image"
+        >
+          <Crop size={12} />
+        </button>
+      )}
+      
       <p className="text-xs text-gray-600 p-2 text-center truncate">{image.name}</p>
     </div>
   );
 };
 
-// PageCanvas Component (droppable area)
-const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, onClick }) => {
+// Enhanced PageCanvas Component with Crop Option for placed images
+const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, onClick, onCropImage }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = (e) => {
@@ -744,15 +437,27 @@ const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, o
                   filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))'
                 }}
               />
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTextChange(index, 'image', null);
-                }}
-                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 size={14} />
-              </button>
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCropImage(page.image, index);
+                  }}
+                  className="bg-blue-500 text-white p-1 rounded-full hover:bg-blue-600 transition-colors"
+                  title="Crop Image"
+                >
+                  <Crop size={14} />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTextChange(index, 'image', null);
+                  }}
+                  className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
           ) : (
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center w-full">
@@ -793,44 +498,7 @@ const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, o
   );
 };
 
-// PageThumbnail Component
-const PageThumbnail = ({ page, index, isActive, onClick, label }) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`relative cursor-pointer bg-white shadow-md hover:shadow-lg transition-all overflow-hidden ${
-        isActive ? 'ring-2 ring-blue-500' : ''
-      }`}
-      style={{ aspectRatio: '8.5/11' }}
-    >
-      <div 
-        className="h-full p-1 text-xs" 
-        style={{ 
-          backgroundColor: page.bgColor || '#faf9f6',
-          background: page.bgPattern || (page.bgColor || '#faf9f6'),
-          backgroundSize: page.bgPatternSize || 'auto',
-          backgroundPosition: page.bgPatternPos || 'center',
-          backgroundRepeat: page.bgPatternRepeat || 'repeat'
-        }}
-      >
-        {page.image && (
-          <img src={page.image} alt={`Page ${index + 1}`} className="w-full h-16 object-contain mb-1" />
-        )}
-        {page.topText && (
-          <div className="text-center text-xs truncate font-serif">{page.topText}</div>
-        )}
-        {page.bottomText && (
-          <div className="text-center text-xs truncate text-gray-500">{page.bottomText}</div>
-        )}
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 text-center py-1">
-        <p className="text-xs font-medium">{label}</p>
-      </div>
-    </div>
-  );
-};
-
-// TextEditor Sidebar Component
+// TextEditor Sidebar Component (same as before)
 const TextEditorSidebar = ({ activePage, onUpdate }) => {
   if (!activePage) return (
     <div className="p-6 text-center text-gray-400">
@@ -979,7 +647,44 @@ const TextEditorSidebar = ({ activePage, onUpdate }) => {
   );
 };
 
-// Main App Component
+// PageThumbnail Component (same as before)
+const PageThumbnail = ({ page, index, isActive, onClick, label }) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`relative cursor-pointer bg-white shadow-md hover:shadow-lg transition-all overflow-hidden ${
+        isActive ? 'ring-2 ring-blue-500' : ''
+      }`}
+      style={{ aspectRatio: '8.5/11' }}
+    >
+      <div 
+        className="h-full p-1 text-xs" 
+        style={{ 
+          backgroundColor: page.bgColor || '#faf9f6',
+          background: page.bgPattern || (page.bgColor || '#faf9f6'),
+          backgroundSize: page.bgPatternSize || 'auto',
+          backgroundPosition: page.bgPatternPos || 'center',
+          backgroundRepeat: page.bgPatternRepeat || 'repeat'
+        }}
+      >
+        {page.image && (
+          <img src={page.image} alt={`Page ${index + 1}`} className="w-full h-16 object-contain mb-1" />
+        )}
+        {page.topText && (
+          <div className="text-center text-xs truncate font-serif">{page.topText}</div>
+        )}
+        {page.bottomText && (
+          <div className="text-center text-xs truncate text-gray-500">{page.bottomText}</div>
+        )}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 text-center py-1">
+        <p className="text-xs font-medium">{label}</p>
+      </div>
+    </div>
+  );
+};
+
+// Main App Component with Cropping Functionality
 const App = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [pages, setPages] = useState([
@@ -1006,6 +711,8 @@ const App = () => {
   const [draggedImage, setDraggedImage] = useState(null);
   const [currentSpread, setCurrentSpread] = useState(0);
   const [scale, setScale] = useState(0.8);
+  const [croppingImage, setCroppingImage] = useState(null);
+  const [croppingPageIndex, setCroppingPageIndex] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleFileUpload = (e) => {
@@ -1085,6 +792,33 @@ const App = () => {
     setCurrentSpread(prev => Math.max(prev - 1, 0));
   };
 
+  // Crop functionality
+  const handleStartCrop = (image, pageIndex = null) => {
+    setCroppingImage(image.src || image);
+    setCroppingPageIndex(pageIndex);
+  };
+
+  const handleCropComplete = (croppedImageUrl) => {
+    if (croppingPageIndex !== null) {
+      // Update image in page
+      const newPages = [...pages];
+      newPages[croppingPageIndex] = { ...newPages[croppingPageIndex], image: croppedImageUrl };
+      setPages(newPages);
+    } else {
+      // Update image in uploaded images
+      setUploadedImages(prev => prev.map(img => 
+        img.src === croppingImage ? { ...img, src: croppedImageUrl } : img
+      ));
+    }
+    setCroppingImage(null);
+    setCroppingPageIndex(null);
+  };
+
+  const handleCropCancel = () => {
+    setCroppingImage(null);
+    setCroppingPageIndex(null);
+  };
+
   // Get current spread pages (2 pages horizontally)
   const currentPages = [
     pages[currentSpread * 2],
@@ -1113,6 +847,7 @@ const App = () => {
                 key={image.id}
                 image={image}
                 onDragStart={handleDragStart}
+                onCrop={handleStartCrop}
               />
             ))}
           </div>
@@ -1227,6 +962,7 @@ const App = () => {
                     onTextChange={handleTextChange}
                     isActive={activePageIndex === actualIndex}
                     onClick={() => setActivePageIndex(actualIndex)}
+                    onCropImage={handleStartCrop}
                   />
                 );
               })}
@@ -1276,6 +1012,15 @@ const App = () => {
           onUpdate={handlePageUpdate}
         />
       </div>
+
+      {/* Image Cropper Modal */}
+      {croppingImage && (
+        <ImageCropper
+          image={croppingImage}
+          onCrop={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 };
