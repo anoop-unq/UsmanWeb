@@ -1,12 +1,10 @@
 
 
 
-
 import React, { useState, useRef } from 'react';
 import { Upload, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ChevronLeft, ChevronRight, ArrowLeft, ArrowRight, Crop, X, Check } from 'lucide-react';
 
-// Background Images Data (same as before)
-// Background Images Data
+// Background Images Data (unchanged)
 const BACKGROUND_IMAGES = [
   { id: 'bg1', name: 'Floral Left', pattern: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M20 50 Q30 30 40 50 T60 50\' stroke=\'%23e5e5e5\' fill=\'none\' stroke-width=\'1\'/%3E%3Ccircle cx=\'30\' cy=\'80\' r=\'15\' fill=\'none\' stroke=\'%23e5e5e5\' stroke-width=\'1\'/%3E%3Cpath d=\'M25 120 L35 110 L40 120 L35 130 Z\' fill=\'%23e5e5e5\'/%3E%3C/svg%3E") left repeat-y' },
   { id: 'bg2', name: 'Floral Right', pattern: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M180 50 Q170 30 160 50 T140 50\' stroke=\'%23e5e5e5\' fill=\'none\' stroke-width=\'1\'/%3E%3Ccircle cx=\'170\' cy=\'80\' r=\'15\' fill=\'none\' stroke=\'%23e5e5e5\' stroke-width=\'1\'/%3E%3Cpath d=\'M175 120 L165 110 L160 120 L165 130 Z\' fill=\'%23e5e5e5\'/%3E%3C/svg%3E") right repeat-y' },
@@ -85,9 +83,9 @@ const BACKGROUND_IMAGES = [
 
 ];
 
-// Image Cropper Component
+// Image Cropper Modal Component
 const ImageCropper = ({ image, onCrop, onCancel }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0, width: 100, height: 100 });
+  const [crop, setCrop] = useState({ x: 20, y: 20, width: 60, height: 60 });
   const containerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -99,8 +97,8 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    // Check if clicking on resize handles
-    const handles = ['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'];
+    // Check resize handles
+    const handles = ['nw', 'ne', 'sw', 'se'];
     for (const handle of handles) {
       if (isInHandle(handle, x, y)) {
         setResizeHandle(handle);
@@ -110,7 +108,7 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
       }
     }
 
-    // Check if clicking inside crop area for moving
+    // Check if inside crop area for moving
     if (x >= crop.x && x <= crop.x + crop.width && 
         y >= crop.y && y <= crop.y + crop.height) {
       setResizeHandle('move');
@@ -123,61 +121,41 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
     if (!isDragging || !resizeHandle) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
 
-    const newCrop = { ...crop };
+    setCrop(prev => {
+      const newCrop = { ...prev };
 
-    switch (resizeHandle) {
-      case 'move':
-        newCrop.x = Math.max(0, Math.min(100 - newCrop.width, x - dragStart.x));
-        newCrop.y = Math.max(0, Math.min(100 - newCrop.height, y - dragStart.y));
-        break;
-      case 'nw':
-        newCrop.width += crop.x - x;
-        newCrop.height += crop.y - y;
-        newCrop.x = Math.max(0, x);
-        newCrop.y = Math.max(0, y);
-        break;
-      case 'ne':
-        newCrop.width = Math.max(10, x - crop.x);
-        newCrop.height += crop.y - y;
-        newCrop.y = Math.max(0, y);
-        break;
-      case 'sw':
-        newCrop.width += crop.x - x;
-        newCrop.height = Math.max(10, y - crop.y);
-        newCrop.x = Math.max(0, x);
-        break;
-      case 'se':
-        newCrop.width = Math.max(10, x - crop.x);
-        newCrop.height = Math.max(10, y - crop.y);
-        break;
-      case 'n':
-        newCrop.height += crop.y - y;
-        newCrop.y = Math.max(0, y);
-        break;
-      case 's':
-        newCrop.height = Math.max(10, y - crop.y);
-        break;
-      case 'e':
-        newCrop.width = Math.max(10, x - crop.x);
-        break;
-      case 'w':
-        newCrop.width += crop.x - x;
-        newCrop.x = Math.max(0, x);
-        break;
-    }
+      switch (resizeHandle) {
+        case 'move':
+          newCrop.x = Math.max(0, Math.min(100 - newCrop.width, x - dragStart.x));
+          newCrop.y = Math.max(0, Math.min(100 - newCrop.height, y - dragStart.y));
+          break;
+        case 'nw':
+          newCrop.width = Math.max(10, prev.x + prev.width - x);
+          newCrop.height = Math.max(10, prev.y + prev.height - y);
+          newCrop.x = Math.max(0, x);
+          newCrop.y = Math.max(0, y);
+          break;
+        case 'ne':
+          newCrop.width = Math.max(10, x - prev.x);
+          newCrop.height = Math.max(10, prev.y + prev.height - y);
+          newCrop.y = Math.max(0, y);
+          break;
+        case 'sw':
+          newCrop.width = Math.max(10, prev.x + prev.width - x);
+          newCrop.height = Math.max(10, y - prev.y);
+          newCrop.x = Math.max(0, x);
+          break;
+        case 'se':
+          newCrop.width = Math.max(10, x - prev.x);
+          newCrop.height = Math.max(10, y - prev.y);
+          break;
+      }
 
-    // Ensure minimum size
-    newCrop.width = Math.max(10, newCrop.width);
-    newCrop.height = Math.max(10, newCrop.height);
-
-    // Ensure within bounds
-    newCrop.x = Math.max(0, Math.min(100 - newCrop.width, newCrop.x));
-    newCrop.y = Math.max(0, Math.min(100 - newCrop.height, newCrop.y));
-
-    setCrop(newCrop);
+      return newCrop;
+    });
   };
 
   const handleMouseUp = () => {
@@ -191,10 +169,6 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
       ne: { x: crop.x + crop.width - 2, y: crop.y - 2, width: 4, height: 4 },
       sw: { x: crop.x - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
       se: { x: crop.x + crop.width - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
-      n: { x: crop.x + crop.width / 2 - 2, y: crop.y - 2, width: 4, height: 4 },
-      s: { x: crop.x + crop.width / 2 - 2, y: crop.y + crop.height - 2, width: 4, height: 4 },
-      e: { x: crop.x + crop.width - 2, y: crop.y + crop.height / 2 - 2, width: 4, height: 4 },
-      w: { x: crop.x - 2, y: crop.y + crop.height / 2 - 2, width: 4, height: 4 },
     };
 
     const handleArea = handles[handle];
@@ -203,7 +177,6 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
   };
 
   const handleCrop = () => {
-    // Create a canvas to crop the image
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
@@ -239,7 +212,7 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, resizeHandle]);
+  }, [isDragging]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
@@ -265,7 +238,7 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
         <div className="p-4">
           <div 
             ref={containerRef}
-            className="relative bg-gray-100 rounded-lg overflow-hidden mx-auto"
+            className="relative bg-gray-100 rounded-lg overflow-hidden mx-auto cursor-move"
             style={{ aspectRatio: '1', maxHeight: '60vh' }}
             onMouseDown={handleMouseDown}
           >
@@ -287,36 +260,22 @@ const ImageCropper = ({ image, onCrop, onCancel }) => {
               }}
             >
               {/* Resize handles */}
-              {['nw', 'ne', 'sw', 'se', 'n', 'e', 's', 'w'].map(handle => (
+              {['nw', 'ne', 'sw', 'se'].map(handle => (
                 <div
                   key={handle}
-                  className={`absolute bg-white border border-blue-500 ${
-                    handle.includes('n') || handle.includes('s') ? 'h-2 w-4' : 'w-2 h-4'
-                  } ${handle.includes('n') ? '-top-1' : ''} ${
-                    handle.includes('s') ? '-bottom-1' : ''
-                  } ${handle.includes('w') ? '-left-1' : ''} ${
-                    handle.includes('e') ? '-right-1' : ''
-                  } ${handle.length === 2 ? 'w-2 h-2' : ''} cursor-${
-                    handle === 'nw' ? 'nw-resize' :
-                    handle === 'ne' ? 'ne-resize' :
-                    handle === 'sw' ? 'sw-resize' :
-                    handle === 'se' ? 'se-resize' :
-                    handle.includes('n') ? 'n-resize' :
-                    handle.includes('s') ? 's-resize' :
-                    handle.includes('e') ? 'e-resize' : 'w-resize'
+                  className={`absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-sm ${
+                    handle === 'nw' ? '-top-1 -left-1 cursor-nw-resize' :
+                    handle === 'ne' ? '-top-1 -right-1 cursor-ne-resize' :
+                    handle === 'sw' ? '-bottom-1 -left-1 cursor-sw-resize' :
+                    '-bottom-1 -right-1 cursor-se-resize'
                   }`}
-                  style={{
-                    left: handle.includes('w') ? '0' : handle.includes('e') ? '100%' : '50%',
-                    top: handle.includes('n') ? '0' : handle.includes('s') ? '100%' : '50%',
-                    transform: 'translate(-50%, -50%)'
-                  }}
                 />
               ))}
             </div>
           </div>
           
           <div className="mt-4 text-center text-sm text-gray-600">
-            Drag to move, drag handles to resize
+            Drag to move, drag corners to resize
           </div>
         </div>
       </div>
@@ -332,7 +291,7 @@ const UploadedImage = ({ image, onDragStart, onCrop }) => {
     <div
       draggable
       onDragStart={(e) => onDragStart(e, image)}
-      className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-move hover:shadow-lg transition-all border-2 border-transparent hover:border-blue-400 group"
+      className="relative bg-white rounded-lg shadow-md overflow-hidden cursor-move hover:shadow-lg transition-shadow border-2 border-transparent hover:border-blue-400 group"
       onMouseEnter={() => setShowOptions(true)}
       onMouseLeave={() => setShowOptions(false)}
     >
@@ -366,7 +325,7 @@ const UploadedImage = ({ image, onDragStart, onCrop }) => {
   );
 };
 
-// Enhanced PageCanvas Component with Crop Option for placed images
+// Enhanced PageCanvas Component with Crop Option
 const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, onClick, onCropImage }) => {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -498,7 +457,44 @@ const PageCanvas = ({ page, index, onDrop, onDragOver, onTextChange, isActive, o
   );
 };
 
-// TextEditor Sidebar Component (same as before)
+// PageThumbnail Component (unchanged)
+const PageThumbnail = ({ page, index, isActive, onClick, label }) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`relative cursor-pointer bg-white shadow-md hover:shadow-lg transition-all overflow-hidden ${
+        isActive ? 'ring-2 ring-blue-500' : ''
+      }`}
+      style={{ aspectRatio: '8.5/11' }}
+    >
+      <div 
+        className="h-full p-1 text-xs" 
+        style={{ 
+          backgroundColor: page.bgColor || '#faf9f6',
+          background: page.bgPattern || (page.bgColor || '#faf9f6'),
+          backgroundSize: page.bgPatternSize || 'auto',
+          backgroundPosition: page.bgPatternPos || 'center',
+          backgroundRepeat: page.bgPatternRepeat || 'repeat'
+        }}
+      >
+        {page.image && (
+          <img src={page.image} alt={`Page ${index + 1}`} className="w-full h-16 object-contain mb-1" />
+        )}
+        {page.topText && (
+          <div className="text-center text-xs truncate font-serif">{page.topText}</div>
+        )}
+        {page.bottomText && (
+          <div className="text-center text-xs truncate text-gray-500">{page.bottomText}</div>
+        )}
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 text-center py-1">
+        <p className="text-xs font-medium">{label}</p>
+      </div>
+    </div>
+  );
+};
+
+// TextEditor Sidebar Component (unchanged)
 const TextEditorSidebar = ({ activePage, onUpdate }) => {
   if (!activePage) return (
     <div className="p-6 text-center text-gray-400">
@@ -647,44 +643,7 @@ const TextEditorSidebar = ({ activePage, onUpdate }) => {
   );
 };
 
-// PageThumbnail Component (same as before)
-const PageThumbnail = ({ page, index, isActive, onClick, label }) => {
-  return (
-    <div
-      onClick={onClick}
-      className={`relative cursor-pointer bg-white shadow-md hover:shadow-lg transition-all overflow-hidden ${
-        isActive ? 'ring-2 ring-blue-500' : ''
-      }`}
-      style={{ aspectRatio: '8.5/11' }}
-    >
-      <div 
-        className="h-full p-1 text-xs" 
-        style={{ 
-          backgroundColor: page.bgColor || '#faf9f6',
-          background: page.bgPattern || (page.bgColor || '#faf9f6'),
-          backgroundSize: page.bgPatternSize || 'auto',
-          backgroundPosition: page.bgPatternPos || 'center',
-          backgroundRepeat: page.bgPatternRepeat || 'repeat'
-        }}
-      >
-        {page.image && (
-          <img src={page.image} alt={`Page ${index + 1}`} className="w-full h-16 object-contain mb-1" />
-        )}
-        {page.topText && (
-          <div className="text-center text-xs truncate font-serif">{page.topText}</div>
-        )}
-        {page.bottomText && (
-          <div className="text-center text-xs truncate text-gray-500">{page.bottomText}</div>
-        )}
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 text-center py-1">
-        <p className="text-xs font-medium">{label}</p>
-      </div>
-    </div>
-  );
-};
-
-// Main App Component with Cropping Functionality
+// Main App Component with Cropping
 const App = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [pages, setPages] = useState([
